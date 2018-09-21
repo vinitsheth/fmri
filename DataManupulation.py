@@ -6,19 +6,22 @@ def getMata(matfile):
 
     ************* Method Description ******************
 
+    matfile argument is the variable reference which you can get after executing the loadmat() function in scipy.io
+    ex. mat = loadmat('/Users/vinitsheth/SmlFinalProject/Data/data-starplus-05710-v7.mat')
+
     Returns Dictoinary which contains following values at index
 
-    study gives the name of the fMRI study
+    study - gives the name of the fMRI study
 
-    subject gives the identifier for the human subject
+    subject - gives the identifier for the human subject
 
-    ntrials gives the number of trials in this dataset
+    ntrials - gives the number of trials in this dataset
 
-    nsnapshots gives the total number of images in the dataset
+    nsnapshots -  gives the total number of images in the dataset
 
-    nvoxels gives the number of voxels (3D pixels) in each image
+    nvoxels - gives the number of voxels (3D pixels) in each image
 
-    dimx gives the maximum x coordinate in the brain image. The minimum x
+    dimx - gives the maximum x coordinate in the brain image. The minimum x
     coordinate is x=1.  meta.dimy and meta.dimz give the same information for the y
     and z coordinates.
     """
@@ -43,7 +46,13 @@ def colToCoord(matfile, col):
 
     ************* Method Description ******************
 
+    matfile argument is the variable reference which you can get after executing the loadmat() function in scipy.io
+    ex. mat = loadmat('/Users/vinitsheth/SmlFinalProject/Data/data-starplus-05710-v7.mat')
+
     Returns the coordinates for the given column number
+
+    Remember the column number starts from 0 as python index starts from 0.
+    Starts from index 0
     """
     return matfile['meta'][0][0]['colToCoord'][col]
 
@@ -54,6 +63,10 @@ def getROINameFromColumn(matfile, col):
     Date :- 09/20/2018
 
     ************* Method Description ******************
+    matfile argument is the variable reference which you can get after executing the loadmat() function in scipy.io
+    ex. mat = loadmat('/Users/vinitsheth/SmlFinalProject/Data/data-starplus-05710-v7.mat')
+
+    Remember the column number starts from 0 as python index starts from 0.
 
     Returns the ROI (Region of interest) for the given column number
     """
@@ -66,6 +79,8 @@ def getColumnsFromROIName(matfile, roi):
     Date :- 09/20/2018
 
     ************* Method Description ******************
+    matfile argument is the variable reference which you can get after executing the loadmat() function in scipy.io
+    ex. mat = loadmat('/Users/vinitsheth/SmlFinalProject/Data/data-starplus-05710-v7.mat')
 
     Returns array of column numbers for the given Roi name.
     """
@@ -81,19 +96,28 @@ def getColumnsFromROINumber(matfile, roi):
     Date :- 09/20/2018
 
     ************* Method Description ******************
+    matfile argument is the variable reference which you can get after executing the loadmat() function in scipy.io
+    ex. mat = loadmat('/Users/vinitsheth/SmlFinalProject/Data/data-starplus-05710-v7.mat')
 
-    Returns array of column numbers for the given Roi number which can be from 0 to 24.
+    Remember the roi starts from 0 to 24 as python index starts from 0.
+
+    Returns array of column numbers for the given Roi number
     """
 
     return matfile['meta'][0][0]['rois'][0][roi][2][0]
 
 
-def getInfoOfTrial(matfile, trialNumber):
+def getInfoOfTrial(matfile, trialIndex):
     """
     Author :- Vinit Sheth
     Date :- 09/20/2018
 
     ************* Method Description ******************
+
+    matfile argument is the variable reference which you can get after executing the loadmat() function in scipy.io
+    ex. mat = loadmat('/Users/vinitsheth/SmlFinalProject/Data/data-starplus-05710-v7.mat')
+
+    Remember the travelIndex starts from 0  as python index starts from 0.
 
     Return Dictoinary which contains information about the given trial.
 
@@ -142,9 +166,7 @@ def getInfoOfTrial(matfile, trialNumber):
 
     numberOftrials = matfile['meta']['ntrials'][0][0][0][0]
 
-    trialIndex = trialNumber - 1
-
-    if trialNumber > numberOftrials and trialNumber > 0:
+    if (trialIndex + 1) > numberOftrials and (trialIndex + 1) > 0:
         print("Invalid trial number. Total trials are " + str(numberOftrials))
     else:
         ans = {}
@@ -160,5 +182,3 @@ def getInfoOfTrial(matfile, trialNumber):
         ans['actionAnswer'] = matfile['info'][0][trialIndex]['actionAnswer'][0][0]
         ans['actionRT'] = matfile['info'][0][trialIndex]['actionRT'][0][0]
         return ans
-
-
