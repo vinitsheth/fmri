@@ -6,6 +6,8 @@
 """
 
 from scipy.io import loadmat
+import os
+import csv
 
 def getMeta(matfile):
     """
@@ -118,8 +120,11 @@ def getData(matFileData, meta):
     Output:
         A 2d list containing all the trial data of the subject 
     """
-    
-    return []
+    data = matFileData['data']
+    data_array = []
+    for item in data:
+        data_array.append(item[0].tolist())
+    return data_array
     
 if __name__ == "__main__":
     
@@ -131,4 +136,21 @@ if __name__ == "__main__":
     data = getData(matFileData, meta)
     
     #
-    #make dir for the subject, add meta and subfolders for each trial containing info and data
+    #write meta to the folder
+    with open('Data/ExtractedData/Subject_04847/meta.data', 'w') as f:
+        for key in meta.keys():
+            f.write("%s:%s\n" % (key, str(meta[key])))
+    #
+    #write all the trials into seperate sub folders inside a subject
+    for i in range(meta['ntrials']):
+        trialDir = 'Data/ExtractedData/Subject_04847/Trial'+str(i+1)
+        os.mkdir(trialDir)
+        
+        with open(trialDir+'/info.data', 'w') as f:
+            for key in info[i].keys():
+                f.write("%s:%s\n" % (key, str(info[i][key])))
+            
+        with open(trialDir+'/data.csv', 'w', newline='') as f:
+            wr = csv.writer(f)
+            wr.writerows(data[i])
+        
