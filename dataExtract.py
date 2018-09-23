@@ -129,3 +129,6 @@ if __name__ == "__main__":
     meta = getMeta(matFileData)
     info = getInfo(matFileData, meta)
     data = getData(matFileData, meta)
+    
+    #
+    #make dir for the subject, add meta and subfolders for each trial containing info and data
