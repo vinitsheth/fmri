@@ -1,0 +1,11 @@
+mint:2565
+maxt:2619
+cond:2
+firstStimulus:S
+sentence:b"'It is true that the star is below the plus.'"
+sentenceRel:b'below'
+sentenceSym1:b'star'
+sentenceSym2:b'plus'
+img:b
+actionAnswer:0
+actionRT:2783

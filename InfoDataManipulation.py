@@ -119,11 +119,14 @@ def getInfoFromList(matfile):
        
 if __name__ == "__main__":
 
-    dir="./Data/Subject_04847/data-starplus-04847-v7.mat" ;
-    mat = scipy.io.loadmat(dir)
+
+ 
+    path = 'Data/Subject_04847/data-starplus-04847-v7.mat'
+    mat = scipy.io.loadmat(path)
+
     
-    trialList=getInfoFromList(mat);
+    trialList=getInfoFromList(mat)
     
-    #print(trialList);
+    print(trialList)
      
 
