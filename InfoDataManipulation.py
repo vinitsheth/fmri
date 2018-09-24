@@ -63,7 +63,7 @@ def getInfo(matfile, trialNumber):
         ans = {}     
        
            
-        #print(trialNumber)
+        #print(trialNumber);
         
         mint=matfile['info'][0][trialNumber]['mint'][0][0];
         ans['mint']=mint;
@@ -110,6 +110,8 @@ def getInfoFromList(matfile):
     trialList=[]
     trialIndices=54
     for infoitem in range (0, trialIndices):
+        
+        #print(infoitem)
         trial=getInfo(matfile,infoitem);
         trialList.append(trial);
         #print(trialList);
@@ -117,7 +119,7 @@ def getInfoFromList(matfile):
        
 if __name__ == "__main__":
 
-    #dir = "/Users/manjusharavindranath/Documents/CSE575/Project/data-starplus-04847-v7.mat";
+    dir="./Data/Subject_04847/data-starplus-04847-v7.mat" ;
     mat = scipy.io.loadmat(dir)
     
     trialList=getInfoFromList(mat);
