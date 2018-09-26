@@ -1,0 +1,11 @@
+mint:1224
+maxt:1278
+cond:3
+firstStimulus:P
+sentence:b"'It is not true that the star is below the dollar.'"
+sentenceRel:b'below'
+sentenceSym1:b'star'
+sentenceSym2:b'dollar'
+img:s
+actionAnswer:0
+actionRT:2942
