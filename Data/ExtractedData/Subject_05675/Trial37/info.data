@@ -1,0 +1,11 @@
+mint:1907
+maxt:1960
+cond:2
+firstStimulus:S
+sentence:b"'It is true that the star is above the dollar.'"
+sentenceRel:b'above'
+sentenceSym1:b'star'
+sentenceSym2:b'dollar'
+img:s
+actionAnswer:0
+actionRT:1789

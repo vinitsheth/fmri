@@ -1,0 +1,11 @@
+mint:1004
+maxt:1058
+cond:3
+firstStimulus:P
+sentence:b"'It is not true that the plus is above the dollar.'"
+sentenceRel:b'above'
+sentenceSym1:b'plus'
+sentenceSym2:b'dollar'
+img:d
+actionAnswer:0
+actionRT:0

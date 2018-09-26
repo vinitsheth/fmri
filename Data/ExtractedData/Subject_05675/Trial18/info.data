@@ -1,0 +1,11 @@
+mint:949
+maxt:1003
+cond:2
+firstStimulus:P
+sentence:b"'It is true that the dollar is below the star.'"
+sentenceRel:b'below'
+sentenceSym1:b'dollar'
+sentenceSym2:b'star'
+img:s
+actionAnswer:0
+actionRT:1653

@@ -1,0 +1,11 @@
+mint:1468
+maxt:1522
+cond:3
+firstStimulus:S
+sentence:b"'It is not true that the star is above the plus.'"
+sentenceRel:b'above'
+sentenceSym1:b'star'
+sentenceSym2:b'plus'
+img:p
+actionAnswer:0
+actionRT:1411

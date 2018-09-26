@@ -1,0 +1,11 @@
+mint:1742
+maxt:1796
+cond:2
+firstStimulus:S
+sentence:b"'It is true that the plus is above the dollar.'"
+sentenceRel:b'above'
+sentenceSym1:b'plus'
+sentenceSym2:b'dollar'
+img:d
+actionAnswer:0
+actionRT:1390
