@@ -198,7 +198,7 @@ def getData(matFileData, meta):
     
 if __name__ == "__main__":
     
-    matFilePath = "Data/Subject_04847/data-starplus-04847-v7.mat"
+    matFilePath = "Data/Subject_04799/data-starplus-04799-v7.mat"
     matFileData = loadmat(matFilePath)
     
     meta = getMeta(matFileData)
@@ -207,13 +207,13 @@ if __name__ == "__main__":
     
     #
     #write meta to the folder
-    with open('Data/ExtractedData/Subject_04847/meta.data', 'w') as f:
+    with open('Data/ExtractedData/Subject_04799/meta.data', 'w') as f:
         for key in meta.keys():
             f.write("%s:%s\n" % (key, str(meta[key])))
     #
     #write all the trials into seperate sub folders inside a subject
     for i in range(meta['ntrials']):
-        trialDir = 'Data/ExtractedData/Subject_04847/Trial'+str(i+1)
+        trialDir = 'Data/ExtractedData/Subject_04799/Trial'+str(i+1)
         os.mkdir(trialDir)
         
         with open(trialDir+'/info.data', 'w') as f:

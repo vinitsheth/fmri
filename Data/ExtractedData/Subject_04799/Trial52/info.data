@@ -1,0 +1,11 @@
+mint:2675
+maxt:2728
+cond:3
+firstStimulus:S
+sentence:b"'It is not true that the dollar is below the plus.'"
+sentenceRel:b'below'
+sentenceSym1:b'dollar'
+sentenceSym2:b'plus'
+img:d
+actionAnswer:0
+actionRT:999
