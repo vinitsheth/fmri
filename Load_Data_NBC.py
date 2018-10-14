@@ -85,89 +85,64 @@ def data_to_examples(info, data):
     return examples, labels
 
 
-def main():
+def main(subjects):
     cwd = os.getcwd()
 
-    subjects = ["Data/ExtractedData/Subject_04799/",
-                         "Data/ExtractedData/Subject_04820",
-                         "Data/ExtractedData/Subject_04847",
-                         "Data/ExtractedData/Subject_05680",
-                         "Data/ExtractedData/Subject-05710"]
+    # subjects = ["Data/ExtractedData/Subject_04799/",
+    #                      "Data/ExtractedData/Subject_04820",
+    #                      "Data/ExtractedData/Subject_04847",
+    #                      "Data/ExtractedData/Subject_05680",
+    #                      "Data/ExtractedData/Subject-05710"]
 
-    all_pic_examples = []
-    all_sen_examples = []
-    all_pic_lables = []
-    all_sen_lables = []
-
+    trials_data = []
+    info = []
     for subject in subjects:
-        info, trials_data = load_data(subject)
-
-        print("Cleaning Data..")
-
-        # collect the non-noise and non-fixation trials: 'cond' > 1
-        pic_info = [d for d in info if (d['firstStimulus'] == 'P' and int(d['cond']) > 1)]
-        sen_info = [d for d in info if (d['firstStimulus'] == 'S' and int(d['cond']) > 1)]
-
-        pic_data = get_related_trials(pic_info, trials_data)
-        sen_data = get_related_trials(sen_info, trials_data)
-
-        del (info, trials_data)
-        gc.collect()
-
-        # Trim the data which are just blanks
-        trim_pic = []
-        for item in pic_data:
-            trim_pic.append(np.concatenate((item[:][1:16], item[:][17:32])))
-
-        del pic_data
-        p_examples, p_labels = data_to_examples(pic_info, trim_pic)
-
-        all_pic_examples.extend(p_examples)
-        all_pic_lables.extend(p_labels)
-
-        del pic_info, trim_pic, p_examples, p_labels
-        gc.collect()
-
-        trim_sen = []
-        for item in sen_data:
-            trim_sen.append(np.concatenate((item[:][1:16], item[:][17:32])))
-
-        del sen_data
-        s_examples, s_labels = data_to_examples(sen_info, trim_sen)
-        all_sen_examples.extend(s_examples)
-        all_sen_lables.extend(s_labels)
-
-        del sen_info, trim_sen, s_examples, s_labels
-        gc.collect()
-
+        info_files, trial_data = load_data(subject)
+        trials_data.extend(trial_data)
+        info.extend(info_files)
         os.chdir(cwd)
-        print("Finished!")
+
+    print("Cleaning Data..")
+    
+    # collect the non-noise and non-fixation trials: 'cond' > 1
+    pic_info = [d for d in info if (d['firstStimulus'] == 'P' and int(d['cond']) > 1)]
+    sen_info = [d for d in info if (d['firstStimulus'] == 'S' and int(d['cond']) > 1)]
+
+    pic_data = get_related_trials(pic_info, trials_data)
+    sen_data = get_related_trials(sen_info, trials_data)
+
+    del (info, trials_data)
+    gc.collect()
+
+    # Trim the data which are just blanks
+    trim_pic = []
+    for item in pic_data:
+        trim_pic.append(np.concatenate((item[:][1:16], item[:][17:32])))
+
+    del pic_data
+    p_examples, p_labels = data_to_examples(pic_info, trim_pic)
+
+    trim_sen = []
+    for item in sen_data:
+        trim_sen.append(np.concatenate((item[:][1:16], item[:][17:32])))
+
+    del sen_data
+    s_examples, s_labels = data_to_examples(sen_info, trim_sen)
 
     examples = []
-    examples.extend(all_pic_examples)
-    examples.extend(all_sen_examples)
+    examples.extend(p_examples)
+    examples.extend(s_examples)
     examples = np.array(examples)
 
-    del all_pic_examples, all_sen_examples
-
     labels = []
-    labels.extend(all_pic_lables)
-    labels.extend(all_sen_lables)
+    labels.extend(p_labels)
+    labels.extend(s_labels)
     labels = np.array(labels).ravel()
 
-    del all_pic_lables, all_sen_lables
-
     print('Done')
-
     return examples, labels
 
 
 if __name__ == "__main__":
     main()
 
-# Subject-05710
-# Subject_05680
-# Subject_05675
-# Subject_04847
-# Subject_04820
-# Subject_04799
