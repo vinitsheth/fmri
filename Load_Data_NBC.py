@@ -1,7 +1,7 @@
 """
 ************* Method Description ******************
 Author: Avinash Patil
-Description: Skeleton for NBC takes input from voxels and classifies brain activity for person viewing image or person reading text.
+Description: Data pre processing for feeding it to ML models
 Input: List of paths to data folder for each subject
 Output: Data Matrix and Label Matrix
 """
