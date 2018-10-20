@@ -94,7 +94,7 @@ def data_to_examples(info, data):
     return examples, labels
 
 
-def GetSubjectData(subjects):
+def get_subject_data(subjects):
     cwd = os.getcwd()
 
     # subjects = ["Data/ExtractedData/Subject_04799/",
