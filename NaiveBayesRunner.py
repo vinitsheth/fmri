@@ -1,4 +1,4 @@
-from Load_Data_NBC import get_subject_data
+from load_data import get_subject_data
 # from LoadDataNBC2 import main
 
 subjects = ["Data/ExtractedData/Subject_04799",
