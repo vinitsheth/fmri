@@ -1,8 +1,12 @@
 # -*- coding: utf-8 -*-
 """
-
-@author: Avinash
+************* Method Description ******************
+Author: Avinash Patil
+Description: Data pre processing for feeding it to ML models
+Input: List of paths to data folder for each subject
+Output: Data Matrix and Label Matrix
 """
+
 import os
 import numpy as np
 import gc
