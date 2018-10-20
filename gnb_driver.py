@@ -1,4 +1,4 @@
-from Load_Data_NBC import main
+from load_data import get_subject_data
 # from LoadDataNBC2 import main
 
 subjects = ["Data/ExtractedData/Subject_04799",
@@ -17,7 +17,7 @@ subjects = ["Data/ExtractedData/Subject_04799",
 # info4, trails4 = main(training_subjects[3])
 # info5, trails5 = main(training_subjects[4])
 
-examples, labels = main(subjects)
+examples, labels = get_subject_data(subjects)
 training_examples, training_labels = examples[:200][:], labels[:200]
 
 print("getting test data")
@@ -34,7 +34,7 @@ print("predicting")
 result = clf.predict(testing_examples)
 ###score = clf.score(testing_examples, testing_labels)
 
-for i in range(0,len(testing_labels)):
+for i in range(0, len(testing_labels)):
     if testing_labels[i] == '3':
         testing_labels[i] = 1
     else:
