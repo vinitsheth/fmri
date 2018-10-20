@@ -1,3 +1,4 @@
+
 """
 ************* Method Description ******************
 Author: Avinash Patil
@@ -12,16 +13,17 @@ import gc
 
 
 def load_data(data_dir):
-    print("Loading data for: ", data_dir.split('/')[2])
+    subject = data_dir.split('/')[2]
+    print("Loading data for: ", subject)
 
     os.chdir(data_dir)
     cwd = os.getcwd()
 
-    # meta = {}
-    # with open(cwd + "\\meta.data") as f:
-    #     for line in f:
-    #         (key, val) = line.rstrip('\n').split(':')
-    #         meta[key] = val
+    meta = {}
+    with open(cwd + "\\meta.data") as f:
+        for line in f:
+            (key, val) = line.rstrip('\n').split(':')
+            meta[key] = val
 
     trials = []
     info_files = []
@@ -43,10 +45,11 @@ def load_data(data_dir):
                     info[key] = val
 
             info['trial'] = len(trials) - 1
+            info['subject'] = subject
             info_files.append(info)
 
     print("Done!")
-    return info_files, trials  # , meta
+    return info_files, trials, meta
 
 
 def get_related_trials(info, trials):
@@ -92,8 +95,13 @@ def data_to_examples(info, data):
     # print('Done D2E')
     return examples, labels
 
+# def seg_data(subject, examples, labels, meta):
+#     for item in meta:
+#         item['']
+#     return test_example,test_labels,train_example,train_label
 
-def main(subjects):
+
+def get_subject_data(subjects):
     cwd = os.getcwd()
 
     # subjects = ["Data/ExtractedData/Subject_04799/",
@@ -104,10 +112,12 @@ def main(subjects):
 
     trials_data = []
     info = []
+    meta = []
     for subject in subjects:
-        info_files, trial_data = load_data(subject)
+        info_files, trial_data, meta_files = load_data(subject)
         trials_data.extend(trial_data)
         info.extend(info_files)
+        meta.extend(meta_files)
         os.chdir(cwd)
 
     print("Cleaning Data..")
@@ -149,8 +159,3 @@ def main(subjects):
 
     print('Done')
     return examples, labels
-
-
-if __name__ == "__main__":
-    main()
-
