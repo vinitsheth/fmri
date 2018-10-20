@@ -1,4 +1,4 @@
-from Load_Data_NBC import main
+from Load_Data_NBC import get_subject_data
 # from LoadDataNBC2 import main
 
 subjects = ["Data/ExtractedData/Subject_04799",
@@ -17,7 +17,7 @@ subjects = ["Data/ExtractedData/Subject_04799",
 # info4, trails4 = main(training_subjects[3])
 # info5, trails5 = main(training_subjects[4])
 
-examples, labels = main(subjects)
+examples, labels = get_subject_data(subjects)
 training_examples, training_labels = examples[:200][:], labels[:200]
 
 print("getting test data")
