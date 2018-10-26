@@ -51,6 +51,7 @@ def getMeta(matfile):
     meta['dimy'] = matfile['meta'][0][0]['dimy'][0][0]
     meta['dimz'] = matfile['meta'][0][0]['dimz'][0][0]
     meta['colToCoord'] = matfile['meta'][0][0]['colToCoord'] #added to grab colToCoord to fill cubes
+    meta['colToROI'] = matfile['meta'][0][0]['colToROI']
     return meta
 
 
@@ -200,7 +201,11 @@ def getData(matFileData, meta):
         #print(item[0].tolist())
         data_array.append(item[0].tolist())
     return data_array
-#Manjusha 
+"""
+Created on Fri Oct 26 10:34:14 2018
+
+@author: manjusharavindranath
+"""
 def convertDataToVolume(curInput, colToCoord): #using the metadata coord to cond
     trialVols=np.zeros((np.shape(curInput)[0],64,64,8))
     for curSeqInd in range(0,np.shape(curInput)[0]):
@@ -209,7 +214,11 @@ def convertDataToVolume(curInput, colToCoord): #using the metadata coord to cond
     #plt.matshow(trialVols[10,:,:,4])
     #plt.show()
     return trialVols
+"""
+Created on Fri Oct 26 10:34:14 2018
 
+@author: manjusharavindranath
+"""
 def trainPCA(inputFeatures, numberComponents):
     cov=np.matmul(np.transpose(inputFeatures),inputFeatures)
     plt.matshow(cov)
@@ -219,28 +228,59 @@ def trainPCA(inputFeatures, numberComponents):
     #np.matmul(eigenvector[:,1],np.transpose(eigenvector[:,5]))
     featMultiplier=eigenvector[:,0:numberComponents]
     return featMultiplier
-if __name__ == "__main__":
+"""
+Created on Fri Oct 26 10:34:14 2018
+
+@author: manjusharavindranath
+"""
+def convertDataToROIAverage(curInput, colToROI, listOfROIs): #List Containing the ROIs we care about
+    trialAvgs=np.zeros((np.shape(curInput)[0],len(listOfROIs)))
+    indROI=0
+    for ROI in listOfROIs:
+        for curSeqInd in range(0,np.shape(curInput)[0]):
+            curSavedVoxels=[]
+            for i in range(0,np.shape(curInput)[1]):
+                if colToROI[i][0][0]==ROI:
+                    curSavedVoxels.append(curInput[curSeqInd,i])
+            trialAvgs[curSeqInd,indROI]=np.average(curSavedVoxels)
+        indROI=indROI+1
+    return trialAvgs
+"""
+Created on Fri Oct 26 10:34:14 2018
+
+@author: manjusharavindranath
+"""
+def normalizeData(curInput):
+    for i in range(0,np.shape(curInput)[0]):
+        curInput[i,:]=(curInput[i,:]-np.min(curInput[i,:]))/(np.max(curInput[i,:])-np.min(curInput[i,:]))
+    return curInput
+"""
+Created on Fri Oct 26 10:34:14 2018
+
+@author: manjusharavindranath
+"""
+def extractData(subjectList, rois): #This function gives the normalized data for each subject
     allData=[]
     allLabels=[]
+    allSubjects=[]#This stores what subject each datapoint belongs to
     allTrialLens=[]
     minTrialLen=0 #This will change
     #Establish the minTrialLen
-    subList=['04847', '04799'] #Can add more subjects to this list
-    for curSubject in subList: #Gets the minimum trial len over all subjects
+    for curSubject in subjectList: #Gets the minimum trial len over all subjects
         matFilePath = "./Data/Subject_"+curSubject+"/data-starplus-"+curSubject+"-v7.mat"
         matFileData = loadmat(matFilePath)
         
         meta = getMeta(matFileData)
-        print(meta)
+        #print(meta)
         info = getInfo(matFileData, meta)
         data = getData(matFileData, meta)
         for i in range(meta['ntrials']):
             if not info[i]['cond']==0:
                 allTrialLens.append(np.shape(data[i])[0])
     minTrialLen=np.min(allTrialLens)
-    print("The minimum trial len is"+str(minTrialLen))
+    #print("The minimum trial len is"+str(minTrialLen))
     subjectsCompleted=0
-    for curSubject in subList: #Loop through the subjects to get data for each subject
+    for curSubject in subjectList: #Loop through the subjects to get data for each subject
         matFilePath = "./Data/Subject_"+curSubject+"/data-starplus-"+curSubject+"-v7.mat"
         matFileData = loadmat(matFilePath)
         
@@ -250,28 +290,53 @@ if __name__ == "__main__":
         
         numTrialsGood=0
         for i in range(meta['ntrials']): #Determines the number of non noisy trials for a given subject
-            if not info[i]['cond']==0:
+            if (not info[i]['cond']==0) and (not info[i]['cond']==1):
                 numTrialsGood=numTrialsGood+1
-        curSubjectData=np.zeros((numTrialsGood,minTrialLen*meta['nvoxels']))
-        curLabels=np.zeros((numTrialsGood,1))
-        curInd=0
+        #curSubjectData=np.zeros((numTrialsGood,minTrialLen*meta['nvoxels']))
+        curLabels=np.zeros((numTrialsGood*2,1))
+        curSubjects=np.zeros((numTrialsGood*2,1))
+        goodTrialInd=0
         allVolsSubject=[]
         for i in range(meta['ntrials']):
-            if not info[i]['cond']==0:
+            if (not info[i]['cond']==0) and (not info[i]['cond']==1): # we only care about cond 2 or 3
+                #For each good trial you will add a picture and a sentence example to the dataset, so you will also add two labels (one picture one sentence) as well as 2 subject values (both the same)
                 curData=np.asarray(data[i])
-                curData=curData[0:minTrialLen,:]
-                curVols=convertDataToVolume(curData,meta['colToCoord']) #gets the sequence of volumes for a trial
-                curVols=np.reshape(curVols,(1,np.prod(np.shape(curVols)))) #Convert suquence of volumes to one long feature vector for current trial
-                allVolsSubject.append(curVols)
-                curLabels[curInd,:]=info[i]['cond']
-#                curInd=curInd+1
+                #curData=curData[0:minTrialLen,:]
+                #curVols=convertDataToVolume(curData,meta['colToCoord']) #gets the sequence of volumes for a trial
+                #Split into picture and sentence
+                if info[i]['firstStimulus']=='P':
+                    curDataPicture=curData[0:16,:]
+                    curDataSentence=curData[16:32,:]
+                else: #THis is firstStimulus S
+                    curDataPicture=curData[16:32,:]
+                    curDataSentence=curData[0:16,:]                    
+                curPictureVols=convertDataToROIAverage(curDataPicture,meta['colToROI'],rois) #Converts sequence of scans to average of each roi for each time step, returns matrix size [n time steps, n rois]
+                curSentenceVols=convertDataToROIAverage(curDataSentence,meta['colToROI'],rois)
+
+                curPictureVols=normalizeData(curPictureVols)
+                curSentenceVols=normalizeData(curSentenceVols)
+
+                curPictureVols=np.reshape(curPictureVols,(1,np.prod(np.shape(curPictureVols)))) #Convert suquence of volumes to one long feature vector for current trial
+                curSentenceVols=np.reshape(curSentenceVols,(1,np.prod(np.shape(curSentenceVols))))
+                allVolsSubject.append(curPictureVols)  
+                allVolsSubject.append(curSentenceVols)
+                curLabels[goodTrialInd*2,:]=1 #Picture is label 1 sentence label 2
+                curLabels[goodTrialInd*2+1,:]=2
+                curSubjects[goodTrialInd*2,:]=int(curSubject)
+                curSubjects[goodTrialInd*2+1,:]=int(curSubject)
+                goodTrialInd=goodTrialInd+1
         if subjectsCompleted==0:
             allData=allVolsSubject
             allLabels=curLabels
+            allSubjects=curSubjects
         else:
-            allData=np.concatenate((allData,allVolsSubject))
+            allData=np.concatenate((allData,np.reshape(allVolsSubject, (np.shape(allVolsSubject)[0],np.shape(allVolsSubject)[2]))))
             allLabels=np.concatenate((allLabels,curLabels))
+            allSubjects=np.concatenate((allSubjects,curSubjects))
         subjectsCompleted=subjectsCompleted+1
-        print("Done Subject "+str(curSubject))
+        print("Done Extracting Subject "+str(curSubject))
         allData=np.squeeze(allData)
-        
+    return allData, allLabels, allSubjects #This could be a pandas dataframe if you want to make it that
+
+#featMultiplier=trainPCA(allData,100)
+#newTrain=np.matmul(allData,featMultiplier)
