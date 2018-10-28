@@ -8,6 +8,9 @@
 from scipy.io import loadmat
 import os
 import csv
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
 
 def getMeta(matfile):
     """
@@ -62,56 +65,56 @@ def getInfoFromList(matfile, trialNumber):
     Output:
         The trial info of the subject corresponding to the trial Number
     info(18)
-     mint: 894
-     maxt: 948
-     cond: 2
-     firstStimulus: 'P'
-     sentence: ''It is true that the star is below the plus.''
-     sentenceRel: 'below'
-     sentenceSym1: 'star'
-     sentenceSym2: 'plus'
-     img: sap
-     actionAnswer: 0
-     actionRT: 3613
+ mint: 894
+ maxt: 948
+ cond: 2
+ firstStimulus: 'P'
+ sentence: ''It is true that the star is below the plus.''
+ sentenceRel: 'below'
+ sentenceSym1: 'star'
+ sentenceSym2: 'plus'
+ img: sap
+ actionAnswer: 0
+ actionRT: 3613
 
-    info.mint gives the time of the first image in the interval (the minimum time)
+info.mint gives the time of the first image in the interval (the minimum time)
 
-    info.maxt gives the time of the last image in the interval (the maximum time)
+info.maxt gives the time of the last image in the interval (the maximum time)
 
-    info.cond has possible values 0,1,2,3.  Cond=0 indicates the data in this
-    segment should be ignored. Cond=1 indicates the segment is a rest, or fixation
-    interval.  Cond=2 indicates the interval is a sentence/picture trial in which
-    the sentence is not negated.  Cond=3 indicates the interval is a
-    sentence/picture trial in which the sentence is negated.
+info.cond has possible values 0,1,2,3.  Cond=0 indicates the data in this
+segment should be ignored. Cond=1 indicates the segment is a rest, or fixation
+interval.  Cond=2 indicates the interval is a sentence/picture trial in which
+the sentence is not negated.  Cond=3 indicates the interval is a
+sentence/picture trial in which the sentence is negated.
 
-    info.firstStimulus: is either 'P' or 'S' indicating whether this trail was
-    obtained during the session is which Pictures were presented before sentences,
-    or during the session in which Sentences were presented before pictures.  The
-    first 27 trials have firstStimulus='P', the remained have firstStimulus='S'.
-    Note this value is present even for trials that are rest trials.  You can pick
-    out the trials for which sentences and pictures were presented by selecting just
-    the trials trials with info.cond=2 or info.cond=3.
+info.firstStimulus: is either 'P' or 'S' indicating whether this trail was
+obtained during the session is which Pictures were presented before sentences,
+or during the session in which Sentences were presented before pictures.  The
+first 27 trials have firstStimulus='P', the remained have firstStimulus='S'.
+Note this value is present even for trials that are rest trials.  You can pick
+out the trials for which sentences and pictures were presented by selecting just
+the trials trials with info.cond=2 or info.cond=3.
 
-    info.sentence gives the sentence presented during this trial.  If none, the
-    value is '' (the empty string).  The fields info.sentenceSym1,
-    info.sentenceSym2, and info.sentenceRel describe the two symbols mentioned in
-    the sentence, and the relation between them.
+info.sentence gives the sentence presented during this trial.  If none, the
+value is '' (the empty string).  The fields info.sentenceSym1,
+info.sentenceSym2, and info.sentenceRel describe the two symbols mentioned in
+the sentence, and the relation between them.
 
-    info.img describes the image presented during this trial.  For example, 'sap'
-    means the image contained a 'star above plus'.  Each image has two tokens, where
-    one is above the other.  The possible tokens are star (s), plus (p), and dollar
-    (d).
+info.img describes the image presented during this trial.  For example, 'sap'
+means the image contained a 'star above plus'.  Each image has two tokens, where
+one is above the other.  The possible tokens are star (s), plus (p), and dollar
+(d).
 
-    info.actionAnswer: has values -1 or 0.  A value of 0 indicates the subject is
-    expected to press the answer button during this trial (either the 'yes' or 'no'
-    button to indicate whether the sentence correctly describes the picture).  A
-    value of -1 indicates it is inappropriate for the subject to press the answer
-    button during this trial (i.e., it is a rest, or fixation trial).
+info.actionAnswer: has values -1 or 0.  A value of 0 indicates the subject is
+expected to press the answer button during this trial (either the 'yes' or 'no'
+button to indicate whether the sentence correctly describes the picture).  A
+value of -1 indicates it is inappropriate for the subject to press the answer
+button during this trial (i.e., it is a rest, or fixation trial).
 
-    info.actionRT: gives the reaction time of the subject, measured as the time at
-    which they pressed the answer button, minus the time at which the second
-    stimulus was presented.  Time is in milliseconds.  If the subject did not press
-    the button at all, the value is 0.
+info.actionRT: gives the reaction time of the subject, measured as the time at
+which they pressed the answer button, minus the time at which the second
+stimulus was presented.  Time is in milliseconds.  If the subject did not press
+the button at all, the value is 0.
 
     """
 
@@ -196,8 +199,8 @@ def getData(matFileData, meta):
         data_array.append(item[0].tolist())
     return data_array
 
-if __name__ == "__main__":
-
+def extractData(subjectname):
+    pathToData = 'Data'
     matFilePath = "Data/Subject-05710/data-starplus-05710-v7.mat"
     matFileData = loadmat(matFilePath)
 
@@ -205,6 +208,41 @@ if __name__ == "__main__":
     info = getInfo(matFileData, meta)
     data = getData(matFileData, meta)
 
+
+    frame = pd.DataFrame(colToCoord)
+
+    k = 0
+    for roi in ROIindex:
+
+        frame1 = frame.loc[frame.index.isin(roi)]
+        # prepare some coordinates
+        x, y, z = np.indices((max(frame[0]), max(frame[1]), max(frame[2])))
+        xmax, xmin = max(frame1[0]), min(frame1[0])
+        ymax, ymin = max(frame1[1]), min(frame1[1])
+        zmax, zmin = max(frame1[2]), min(frame1[2])
+        # draw cuboids in the top left and bottom right corners, and a link between them
+        cube1 = (x <= xmax) & (x >= xmin)& (y <= ymax) & (y>=ymin) & (z <= zmax) & (z >= zmin)
+
+        # combine the objects into a single boolean array
+        voxels = cube1
+
+        # set the colors of each object
+        colors = np.empty(voxels.shape, dtype=object)
+
+        colors[cube1] = 'blue'
+
+
+        # and plot everything
+        fig = plt.figure()
+        ax = fig.gca(projection='3d')
+        ax.voxels(voxels, facecolors=colors, edgecolor='k')
+        plt.savefig('Data/roi/pic'+str(k)+".jpg")
+        k+= 1
+        plt.show()
+
+    """
+    """
+    #
     #write meta to the folder
     with open('Data/ExtractedData/Subject-05710/meta.data', 'w') as f:
         for key in meta.keys():
