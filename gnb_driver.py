@@ -1,4 +1,5 @@
-from load_data import get_subject_data
+import load_data
+from numpy import concatenate
 # from LoadDataNBC2 import main
 
 subjects = ["Data/ExtractedData/Subject_04799",
@@ -17,11 +18,21 @@ subjects = ["Data/ExtractedData/Subject_04799",
 # info4, trails4 = main(training_subjects[3])
 # info5, trails5 = main(training_subjects[4])
 
-examples, labels = get_subject_data(subjects)
-training_examples, training_labels = examples[:200][:], labels[:200]
+examples, labels, freq = load_data.get_subject_data(subjects)
+
+print(freq)
+
+# training_examples,training_labels,testing_examples,testing_labels = segregate_data(test_Subjects, examples, labels, freq)
+
+training_examples = concatenate((examples[:100][:], examples[120:220][:]))
+training_labels = concatenate((labels[:100], labels[120:220]))
+
 
 print("getting test data")
-testing_examples, testing_labels = examples[200:][:], labels[200:]
+testing_examples, testing_labels = examples[100:120][:], labels[200:]
+
+testing_examples = concatenate((examples[100:120][:], examples[220:][:]))
+testing_labels = concatenate((labels[100:120], labels[220:]))
 
 from GNB import GaussianNB
 # from sklearn.naive_bayes import GaussianNB
@@ -31,19 +42,19 @@ print("Fitting..")
 clf.fit(training_examples, training_labels)
 
 print("predicting")
-result = clf.predict(testing_examples)
-###score = clf.score(testing_examples, testing_labels)
+# result = clf.predict(testing_examples)
+score = clf.score(testing_examples, testing_labels)
 
-for i in range(0, len(testing_labels)):
-    if testing_labels[i] == '3':
-        testing_labels[i] = 1
-    else:
-        testing_labels[i] = 0
+# score = 0
+# for i in range(0, len(testing_labels)):
+#     if result[i] == int(testing_labels[i]):
+#         score += 1
+#
+# score = score/len(testing_labels)
 
-score = 0
-for i in range(0, len(testing_labels)):
-    if result[i] == int(testing_labels[i]):
-        score += 1
-
-score = score/len(testing_labels)
 print(score)
+
+
+def segregate_data(test_Subjects, examples, labels, freq):
+    for item in freq:
+        print(item)
