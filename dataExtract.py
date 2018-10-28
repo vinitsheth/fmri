@@ -8,6 +8,9 @@
 from scipy.io import loadmat
 import os
 import csv
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
 
 def getMeta(matfile):
     """
@@ -196,8 +199,8 @@ def getData(matFileData, meta):
         data_array.append(item[0].tolist())
     return data_array
     
-if __name__ == "__main__":
-    
+def extractData(subjectname):
+    pathToData = 'Data'
     matFilePath = "Data/Subject-05710/data-starplus-05710-v7.mat"
     matFileData = loadmat(matFilePath)
     
@@ -205,6 +208,40 @@ if __name__ == "__main__":
     info = getInfo(matFileData, meta)
     data = getData(matFileData, meta)
     
+    
+    frame = pd.DataFrame(colToCoord)
+    
+    k = 0
+    for roi in ROIindex:
+    
+        frame1 = frame.loc[frame.index.isin(roi)]    
+        # prepare some coordinates
+        x, y, z = np.indices((max(frame[0]), max(frame[1]), max(frame[2])))
+        xmax, xmin = max(frame1[0]), min(frame1[0])
+        ymax, ymin = max(frame1[1]), min(frame1[1])
+        zmax, zmin = max(frame1[2]), min(frame1[2])
+        # draw cuboids in the top left and bottom right corners, and a link between them
+        cube1 = (x <= xmax) & (x >= xmin)& (y <= ymax) & (y>=ymin) & (z <= zmax) & (z >= zmin)
+        
+        # combine the objects into a single boolean array
+        voxels = cube1
+        
+        # set the colors of each object
+        colors = np.empty(voxels.shape, dtype=object)
+        
+        colors[cube1] = 'blue'
+        
+        
+        # and plot everything
+        fig = plt.figure()
+        ax = fig.gca(projection='3d')
+        ax.voxels(voxels, facecolors=colors, edgecolor='k')
+        plt.savefig('Data/roi/pic'+str(k)+".jpg")
+        k+= 1
+        plt.show()
+        
+    """
+    """
     #
     #write meta to the folder
     with open('Data/ExtractedData/Subject-05710/meta.data', 'w') as f:
@@ -223,4 +260,3 @@ if __name__ == "__main__":
         with open(trialDir+'/data.csv', 'w', newline='') as f:
             wr = csv.writer(f)
             wr.writerows(data[i])
-        

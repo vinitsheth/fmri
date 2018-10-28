@@ -1,5 +1,6 @@
 import load_data
 from numpy import concatenate
+
 # from LoadDataNBC2 import main
 
 subjects = ["Data/ExtractedData/Subject_04799",
@@ -42,6 +43,7 @@ print("Fitting..")
 clf.fit(training_examples, training_labels)
 
 print("predicting")
+
 # result = clf.predict(testing_examples)
 score = clf.score(testing_examples, testing_labels)
 
@@ -54,7 +56,3 @@ score = clf.score(testing_examples, testing_labels)
 
 print(score)
 
-
-def segregate_data(test_Subjects, examples, labels, freq):
-    for item in freq:
-        print(item)

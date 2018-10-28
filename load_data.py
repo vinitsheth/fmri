@@ -33,6 +33,7 @@ def get_raw_data(data_dir, idx):
             trial_data = open(cwd + "\\data.csv").read()
             # get data by lines but drop last line as it is empty
             trial_data = trial_data.split("\n")[:-1]
+
             # trial_data = np.array([i.split(",") for i in trial_data])
             trial_data = np.array([i.split(",") for i in trial_data])
             # trial_data.append(open(cwd + "\\info.data").read())
@@ -52,7 +53,7 @@ def get_raw_data(data_dir, idx):
     print("Done!")
     return info_files, trials, meta
 
-
+  
 def get_subject_data(subjects):
     cwd = os.getcwd()
 
@@ -73,3 +74,4 @@ def get_subject_data(subjects):
         os.chdir(cwd)
 
     return scrubber.clean_data(trials_data, info)
+
