@@ -13,8 +13,8 @@ import numpy as np
 
 if __name__ == "__main__":
     
-    subList=['04799','04847','05710','05675','05680']
-    rois=['CALC','LIPL','LIPS''LOPER','LDLPFC','LT','LTRIA']
+    subList=['04799','04847']#,'05710','05675','05680']
+    rois=['CALC','LIPL','LIPS’,’LOPER','LDLPFC','LT','LTRIA']
     data, labels, subjects=extractData(subList, rois)
     subjects=np.squeeze(subjects)
     uniqueSubjects=np.unique(subjects)
