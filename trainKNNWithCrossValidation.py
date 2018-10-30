@@ -13,8 +13,8 @@ import numpy as np
 
 if __name__ == "__main__":
     
-    subList=['04799','04847']#,'05710','05675','05680']
-    rois=['CALC','LIPL','LIPS’,’LOPER','LDLPFC','LT','LTRIA']
+    subList=['04799','04847','05710','05675','05680']
+    rois=['CALC','LIPL','LIPS','LOPER','LDLPFC','LT','LTRIA']
     data, labels, subjects=extractData(subList, rois)
     subjects=np.squeeze(subjects)
     uniqueSubjects=np.unique(subjects)
@@ -34,4 +34,3 @@ if __name__ == "__main__":
         acc=np.sum((curPreds[:,0]-testLabels[:,0])==0)/np.shape(curPreds)[0]
         print("Subject: "+str(subject))
         print(acc)
-
