@@ -201,11 +201,6 @@ def getData(matFileData, meta):
         #print(item[0].tolist())
         data_array.append(item[0].tolist())
     return data_array
-"""
-Created on Fri Oct 26 10:34:14 2018
-
-@author: manjusharavindranath
-"""
 def convertDataToVolume(curInput, colToCoord): #using the metadata coord to cond
     trialVols=np.zeros((np.shape(curInput)[0],64,64,8))
     for curSeqInd in range(0,np.shape(curInput)[0]):
@@ -214,11 +209,6 @@ def convertDataToVolume(curInput, colToCoord): #using the metadata coord to cond
     #plt.matshow(trialVols[10,:,:,4])
     #plt.show()
     return trialVols
-"""
-Created on Fri Oct 26 10:34:14 2018
-
-@author: manjusharavindranath
-"""
 def trainPCA(inputFeatures, numberComponents):
     cov=np.matmul(np.transpose(inputFeatures),inputFeatures)
     plt.matshow(cov)
@@ -228,11 +218,8 @@ def trainPCA(inputFeatures, numberComponents):
     #np.matmul(eigenvector[:,1],np.transpose(eigenvector[:,5]))
     featMultiplier=eigenvector[:,0:numberComponents]
     return featMultiplier
-"""
-Created on Fri Oct 26 10:34:14 2018
-
-@author: manjusharavindranath
-"""
+#def downsampleVols(curVol):
+#    return curVol[0:24,0::4,0::4,:]
 def convertDataToROIAverage(curInput, colToROI, listOfROIs): #List Containing the ROIs we care about
     trialAvgs=np.zeros((np.shape(curInput)[0],len(listOfROIs)))
     indROI=0
@@ -245,20 +232,11 @@ def convertDataToROIAverage(curInput, colToROI, listOfROIs): #List Containing th
             trialAvgs[curSeqInd,indROI]=np.average(curSavedVoxels)
         indROI=indROI+1
     return trialAvgs
-"""
-Created on Fri Oct 26 10:34:14 2018
 
-@author: manjusharavindranath
-"""
 def normalizeData(curInput):
     for i in range(0,np.shape(curInput)[0]):
         curInput[i,:]=(curInput[i,:]-np.min(curInput[i,:]))/(np.max(curInput[i,:])-np.min(curInput[i,:]))
     return curInput
-"""
-Created on Fri Oct 26 10:34:14 2018
-
-@author: manjusharavindranath
-"""
 def extractData(subjectList, rois): #This function gives the normalized data for each subject
     allData=[]
     allLabels=[]
@@ -312,18 +290,17 @@ def extractData(subjectList, rois): #This function gives the normalized data for
                     curDataSentence=curData[0:16,:]                    
                 curPictureVols=convertDataToROIAverage(curDataPicture,meta['colToROI'],rois) #Converts sequence of scans to average of each roi for each time step, returns matrix size [n time steps, n rois]
                 curSentenceVols=convertDataToROIAverage(curDataSentence,meta['colToROI'],rois)
-                #print(np.shape(curPictureVols))
-                #print(np.shape(curSentenceVols))
+
                 curPictureVols=normalizeData(curPictureVols)
                 curSentenceVols=normalizeData(curSentenceVols)
 
                 curPictureVols=np.reshape(curPictureVols,(1,np.prod(np.shape(curPictureVols)))) #Convert suquence of volumes to one long feature vector for current trial
                 curSentenceVols=np.reshape(curSentenceVols,(1,np.prod(np.shape(curSentenceVols))))
-                allVolsSubject.append(curPictureVols)  #Append all trial volumes of one subject
+                allVolsSubject.append(curPictureVols)  
                 allVolsSubject.append(curSentenceVols)
-                curLabels[goodTrialInd*2,:]=1 #Picture is label 1 sentence label 2,we need to add two labels corresponding to curPictureVols and curSentenceVols
+                curLabels[goodTrialInd*2,:]=1 #Picture is label 1 sentence label 2
                 curLabels[goodTrialInd*2+1,:]=2
-                curSubjects[goodTrialInd*2,:]=int(curSubject)#For each row in data allVolsSubject which subject it came from
+                curSubjects[goodTrialInd*2,:]=int(curSubject)
                 curSubjects[goodTrialInd*2+1,:]=int(curSubject)
                 goodTrialInd=goodTrialInd+1
         if subjectsCompleted==0:
@@ -331,7 +308,7 @@ def extractData(subjectList, rois): #This function gives the normalized data for
             allLabels=curLabels
             allSubjects=curSubjects
         else:
-            allData=np.concatenate((allData,np.reshape(allVolsSubject, (np.shape(allVolsSubject)[0],np.shape(allVolsSubject)[2])))) #concatenate allVolsSubject to allData from n trials*1*112
+            allData=np.concatenate((allData,np.reshape(allVolsSubject, (np.shape(allVolsSubject)[0],np.shape(allVolsSubject)[2]))))
             allLabels=np.concatenate((allLabels,curLabels))
             allSubjects=np.concatenate((allSubjects,curSubjects))
         subjectsCompleted=subjectsCompleted+1
