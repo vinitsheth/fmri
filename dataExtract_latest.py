@@ -10,7 +10,25 @@ import os
 import csv
 import numpy as np
 import matplotlib.pyplot as plt
+import pickle
+def getColumsFromROI(subject,roiNumber):
+    """
+    Author :- Vinit Sheth
+    Date :- 11/01/2018
 
+    ************* Method Description ******************
+    Input - Give subject number as string NOT AS INTEGER 
+            for example for subject 04799 give first argument as '04799'.
+            Second arguments is the ROI Number 
+    returns list (Not numpy array) of the colums (voxels) in 
+
+    dependences - Need Pickle module.
+    """
+    
+    path = "rois/rois"+str(subject)+".txt"
+    f = open(path,'rb')
+    l = pickle.load(f)
+    return l[roiNumber]
 def getMeta(matfile):
     """
     Author :- Vinit Sheth
