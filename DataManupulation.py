@@ -164,21 +164,42 @@ def getInfoOfTrial(matfile, trialIndex):
 
     # Get the number of trials for this dataset and check if it is in the range of number of trials
 
-    numberOftrials = matfile['meta']['ntrials'][0][0][0][0]
-
-    if (trialIndex + 1) > numberOftrials and (trialIndex + 1) > 0:
-        print("Invalid trial number. Total trials are " + str(numberOftrials))
+    info = {}     
+     
+    info['mint'] = matfile['info'][0][trialNumber]['mint'][0][0]
+    info['maxt'] = matfile['info'][0][trialNumber]['maxt'][0][0]
+    info['cond'] = matfile['info'][0][trialNumber]['cond'][0][0]  
+    info['firstStimulus'] = matfile['info'][0][trialNumber]['firstStimulus'][0][0]
+    sentence = matfile['info'][0][trialNumber]['sentence']
+    
+    if sentence.size > 0 :
+        info['sentence']=sentence[0][:].encode('utf-8')
     else:
-        ans = {}
-        ans['mint'] = matfile['info'][0][trialIndex]['mint'][0][0]
-        ans['maxt'] = matfile['info'][0][trialIndex]['maxt'][0][0]
-        ans['cond'] = matfile['info'][0][trialIndex]['cond'][0][0]
-        ans['firstStimulus'] = matfile['info'][0][trialIndex]['firstStimulus'][0][0].encode('utf-8')
-        ans['sentence'] = matfile['info'][0][trialIndex]['sentence'][0][:].encode('utf-8')
-        ans['sentenceRel'] = matfile['info'][0][trialIndex]['sentenceRel'][0][:].encode('utf-8')
-        ans['sentenceSym1'] = matfile['info'][0][trialIndex]['sentenceSym1'][0][:].encode('utf-8')
-        ans['sentenceSym2'] = matfile['info'][0][trialIndex]['sentenceSym2'][0][:].encode('utf-8')
-        ans['img'] = matfile['info'][0][trialIndex]['img'][0][:].encode('utf-8')
-        ans['actionAnswer'] = matfile['info'][0][trialIndex]['actionAnswer'][0][0]
-        ans['actionRT'] = matfile['info'][0][trialIndex]['actionRT'][0][0]
-        return ans
+        info['sentence']=''
+        
+    sentenceRel = matfile['info'][0][trialNumber]['sentenceRel']   
+    if sentenceRel.size > 0 :
+        info['sentenceRel'] = sentenceRel[0][:].encode('utf-8')
+    else:
+        info['sentenceRel']=''    
+    sentenceSym1=matfile['info'][0][trialNumber]['sentenceSym1']
+    if sentenceSym1.size > 0:
+        info['sentenceSym1'] = sentenceSym1[0][:].encode('utf-8')
+    else:
+        info['sentenceSym1']=''     
+    sentenceSym2= matfile['info'][0][trialNumber]['sentenceSym2']  
+    if sentenceSym2.size > 0:
+        info['sentenceSym2'] = sentenceSym2[0][:].encode('utf-8')
+    else:
+        info['sentenceSym2']=''     
+    img = matfile['info'][0][trialNumber]['img']
+    if img.size > 0:
+        info['img'] = img[0][0]
+    else:
+        info['img']=''  
+        
+    info['actionAnswer'] = matfile['info'][0][trialNumber]['actionAnswer'][0][0]
+    info['actionRT'] = matfile['info'][0][trialNumber]['actionRT'][0][0]
+
+         
+    return info 
