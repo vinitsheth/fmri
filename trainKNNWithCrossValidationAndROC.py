@@ -1,4 +1,9 @@
 #Starplus experimentation
+"""
+Created on Fri November 16 06:30:10 2018
+
+@author: manjusharavindranath
+"""
 from dataExtract_With_PCA import extractData, trainPCA
 from KNN_model import trainKNN, predictKNN, predictKNNConfBinary, computeROC
 import numpy as np
